@@ -3,7 +3,7 @@
 void System::readmap(){
     FILE* fp;
     char garb, ch;
-    if((fp = fopen("map.data", "r")) == nullptr){
+    if((fp = fopen("input.data", "r")) == nullptr){
         puts("File could not be opened");
     }    
     fscanf(fp, "%d%d%d", &height, &width, &step);
@@ -39,7 +39,6 @@ void System::showmap(){
         printf("\n");
     }
     printf("recharge position:%d %d\n", ir, jr);
-    printf("maxstep:%d\n", maxstep);
 }
 void System::CalculateStep(int i, int j, int _step){
     if(i>0){
@@ -68,6 +67,8 @@ void System::CalculateStep(int i, int j, int _step){
     }
 }
 void System::getinfo(){
+    int maxstep=0;
+    int* stepinfo;
     for(int i=0;i<height;i++)
         for(int j=0;j<width;j++){
             if(map[i][j]==-1)   map[i][j]=0;
@@ -102,4 +103,5 @@ void System::getinfo(){
     }
     for(int i=0;i<=maxstep;i++)
         printf("%d step: %d\n", i, stepinfo[i]);
+    delete []stepinfo;
 }
