@@ -1,6 +1,7 @@
 #include "system.h"
 #include <iostream>
 #include <stack>
+#include <queue>
 void System::readmap(){
     FILE* fp;
     char garb, ch;
@@ -109,24 +110,25 @@ void System::getinfo(){
 }
 void System::MopFloor(){
     std::stack<std::pair<int, int>> sta;
+    std::queue<std::pair<int, int>> que;
     int k;
     while(maxstep){
         for(int i=steppostion[maxstep].number;i>=0;i--){
             if(done[steppostion[maxstep].pos_i[i]][steppostion[maxstep].pos_j[i]]==0){
                 System::findway(steppostion[maxstep].pos_i[i], steppostion[maxstep].pos_j[i], maxstep, sta);
-                std::cin >> k;
+                //std::cin >> k;
                 while(!sta.empty()){
                     printf("(%d,%d)\n", sta.top().first, sta.top().second);
                     sta.pop();
                 }
-                System::showmap();
-                System::findway(steppostion[maxstep].pos_i[i], steppostion[maxstep].pos_j[i], maxstep, sta);
-                std::cin >> k;
-                while(!sta.empty()){
-                    printf("(%d,%d)\n", sta.top().first, sta.top().second);
-                    sta.pop();
+                //System::showmap();
+                System::findway(steppostion[maxstep].pos_i[i], steppostion[maxstep].pos_j[i], maxstep, que);
+                //std::cin >> k;
+                while(!que.empty()){
+                    printf("(%d,%d)\n", que.front().first, que.front().second);
+                    que.pop();
                 }
-                System::showmap();          
+                //System::showmap();
             }
         }
         maxstep--;
@@ -136,79 +138,87 @@ void System::findway(int i, int j , int distance, std::stack<std::pair<int, int>
     sta.push({i, j});
     done[i][j]=1;
     if(power/2>distance+2){ //can mop more floor
-        if(done[i-1][j]==0 && map[i-1][j]>map[i][j]){  // not done && bigger
-            findway(i-1, j, distance+2, sta);
-        }
-        else if(done[i+1][j]==0 && map[i+1][j]>map[i][j]){
-            findway(i+1, j, distance+2, sta);
-        }
-        else if(done[i][j-1]==0 && map[i][j-1]>map[i][j]){
-            findway(i, j-1, distance+2, sta);
-        }
-        else if(done[i][j+1]==0 && map[i][j+1]>map[i][j+1]){
-            findway(i, j+1, distance+2, sta);
-        }
-        else{
-            if(done[i-1][j]==0 && map[i-1][j]==map[i][j]){  // not done && equal
-                findway(i-1, j, distance+1, sta);
-            }
-            else if(done[i+1][j]==0 && map[i+1][j]==map[i][j]){
-                findway(i+1, j, distance+1, sta);              
-            }
-            else if(done[i][j-1]==0 && map[i][j-1]==map[i][j]){
-                findway(i, j-1, distance+1, sta);                
-            }
-            else if(done[i][j+1]==0 && map[i][j+1]==map[i][j]){
-                findway(i, j+1, distance+1, sta);
-            }
+        // not done && bigger
+        if(done[i-1][j]==0 && map[i-1][j]>map[i][j])        findway(i-1, j, distance+2, sta);
+        else if(done[i+1][j]==0 && map[i+1][j]>map[i][j])   findway(i+1, j, distance+2, sta);
+        else if(done[i][j-1]==0 && map[i][j-1]>map[i][j])   findway(i, j-1, distance+2, sta);
+        else if(done[i][j+1]==0 && map[i][j+1]>map[i][j])   findway(i, j+1, distance+2, sta);
+        else{   // not done && equal
+            if(done[i-1][j]==0 && map[i-1][j]==map[i][j])       findway(i-1, j, distance+1, sta);
+            else if(done[i+1][j]==0 && map[i+1][j]==map[i][j])  findway(i+1, j, distance+1, sta);              
+            else if(done[i][j-1]==0 && map[i][j-1]==map[i][j])  findway(i, j-1, distance+1, sta);                
+            else if(done[i][j+1]==0 && map[i][j+1]==map[i][j])  findway(i, j+1, distance+1, sta);
             else{   // not done && smaller
-                if(done[i-1][j]==0){
-                    findway(i-1, j, distance, sta);
-                }
-                else if(done[i+1][j]==0){
-                    findway(i+1, j, distance, sta);
-                }
-                else if(done[i][j-1]==0){
-                    findway(i, j-1, distance, sta);
-                }
-                else if(done[i][j+1]==0){
-                    findway(i, j+1, distance, sta);
-                }
+                if(done[i-1][j]==0)         findway(i-1, j, distance, sta);
+                else if(done[i+1][j]==0)    findway(i+1, j, distance, sta);
+                else if(done[i][j-1]==0)    findway(i, j-1, distance, sta);
+                else if(done[i][j+1]==0)    findway(i, j+1, distance, sta);
                 else{   // done && smaller
                     if(done[i-1][j]>0 && map[i-1][j]<map[i][j]) findway(i-1, j, distance, sta);
                     else if(done[i+1][j]>0 && map[i+1][j]<map[i][j]) findway(i+1, j, distance, sta);
                     else if(done[i][j-1]>0 && map[i][j-1]<map[i][j]) findway(i, j-1, distance, sta);
                     else if(done[i][j+1]>0 && map[i][j+1]<map[i][j]) findway(i, j+1, distance, sta);
+                    else sta.push({ir, jr});
                 }
             }
         }
     }
     else{ //just go back for recharging
-        if(done[i-1][j]==0 && map[i-1][j]<map[i][j]){   // not done && smaller
-            findway(i-1, j, distance, sta);
-        }
-        else if(done[i+1][j]==0 && map[i+1][j]<map[i][j]){
-            findway(i+1, j, distance, sta);
-        }
-        else if(done[i][j-1]==0 && map[i][j-1]<map[i][j]){
-            findway(i, j-1, distance, sta);
-        }
-        else if(done[i][j+1]==0 && map[i][j+1]<map[i][j]){
-            findway(i, j+1, distance, sta);
-        }
+        // not done && smaller
+        if(done[i-1][j]==0 && map[i-1][j]<map[i][j])        findway(i-1, j, distance, sta);
+        else if(done[i+1][j]==0 && map[i+1][j]<map[i][j])   findway(i+1, j, distance, sta);
+        else if(done[i][j-1]==0 && map[i][j-1]<map[i][j])   findway(i, j-1, distance, sta);
+        else if(done[i][j+1]==0 && map[i][j+1]<map[i][j])   findway(i, j+1, distance, sta);
         else{   // done && smaller
-            if(done[i-1][j]>0 && map[i-1][j]<map[i][j]){
-                findway(i-1, j, distance, sta);
+            if(done[i-1][j]>0 && map[i-1][j]<map[i][j])     findway(i-1, j, distance, sta);
+            else if(done[i+1][j]>0 && map[i+1][j]<map[i][j])findway(i+1, j, distance, sta);
+            else if(done[i][j-1]>0 && map[i][j-1]<map[i][j])findway(i, j-1, distance, sta);
+            else if(done[i][j+1]>0 && map[i][j+1]<map[i][j])findway(i, j+1, distance, sta);
+            else sta.push({ir, jr});
+        }
+    }
+}
+void System::findway(int i, int j , int distance, std::queue<std::pair<int, int>>& que){
+    que.push({i, j});
+    done[i][j]=1;
+    if(power/2>distance+2){ //can mop more floor
+        // not done && bigger
+        if(done[i-1][j]==0 && map[i-1][j]>map[i][j])        findway(i-1, j, distance+2, que);
+        else if(done[i+1][j]==0 && map[i+1][j]>map[i][j])   findway(i+1, j, distance+2, que);
+        else if(done[i][j-1]==0 && map[i][j-1]>map[i][j])   findway(i, j-1, distance+2, que);
+        else if(done[i][j+1]==0 && map[i][j+1]>map[i][j])   findway(i, j+1, distance+2, que);
+        else{   // not done && equal
+            if(done[i-1][j]==0 && map[i-1][j]==map[i][j])       findway(i-1, j, distance+1, que);
+            else if(done[i+1][j]==0 && map[i+1][j]==map[i][j])  findway(i+1, j, distance+1, que);              
+            else if(done[i][j-1]==0 && map[i][j-1]==map[i][j])  findway(i, j-1, distance+1, que);                
+            else if(done[i][j+1]==0 && map[i][j+1]==map[i][j])  findway(i, j+1, distance+1, que);
+            else{   // not done && smaller
+                if(done[i-1][j]==0)         findway(i-1, j, distance, que);
+                else if(done[i+1][j]==0)    findway(i+1, j, distance, que);
+                else if(done[i][j-1]==0)    findway(i, j-1, distance, que);
+                else if(done[i][j+1]==0)    findway(i, j+1, distance, que);
+                else{   // done && smaller
+                    if(done[i-1][j]>0 && map[i-1][j]<map[i][j]) findway(i-1, j, distance, que);
+                    else if(done[i+1][j]>0 && map[i+1][j]<map[i][j]) findway(i+1, j, distance, que);
+                    else if(done[i][j-1]>0 && map[i][j-1]<map[i][j]) findway(i, j-1, distance, que);
+                    else if(done[i][j+1]>0 && map[i][j+1]<map[i][j]) findway(i, j+1, distance, que);
+                    else que.push({ir, jr});
+                }
             }
-            else if(done[i+1][j]>0 && map[i+1][j]<map[i][j]){
-                findway(i+1, j, distance, sta);
-            }
-            else if(done[i][j-1]>0 && map[i][j-1]<map[i][j]){
-                findway(i, j-1, distance, sta);
-            }
-            else if(done[i][j+1]>0 && map[i][j+1]<map[i][j]){
-                findway(i, j+1, distance, sta);
-            }
+        }
+    }
+    else{ //just go back for recharging
+        // not done && smaller
+        if(done[i-1][j]==0 && map[i-1][j]<map[i][j])        findway(i-1, j, distance, que);
+        else if(done[i+1][j]==0 && map[i+1][j]<map[i][j])   findway(i+1, j, distance, que);
+        else if(done[i][j-1]==0 && map[i][j-1]<map[i][j])   findway(i, j-1, distance, que);
+        else if(done[i][j+1]==0 && map[i][j+1]<map[i][j])   findway(i, j+1, distance, que);
+        else{   // done && smaller
+            if(done[i-1][j]>0 && map[i-1][j]<map[i][j])     findway(i-1, j, distance, que);
+            else if(done[i+1][j]>0 && map[i+1][j]<map[i][j])findway(i+1, j, distance, que);
+            else if(done[i][j-1]>0 && map[i][j-1]<map[i][j])findway(i, j-1, distance, que);
+            else if(done[i][j+1]>0 && map[i][j+1]<map[i][j])findway(i, j+1, distance, que);
+            else que.push({ir, jr});
         }
     }
 }
