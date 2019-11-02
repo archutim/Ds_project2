@@ -4,11 +4,11 @@
     class Map {
         protected:
             int** map, **done;
-            int height, width, step, ir, jr;
+            int height, width, power, ir, jr, maxstep;
             Steppostion* steppostion;
         public:
             Map():map(nullptr), done(nullptr),height(0), width(0),
-                     step(0), ir(0), jr(0), steppostion(nullptr){}      
+                     power(0), ir(0), jr(0), maxstep(0), steppostion(nullptr){}      
             ~Map(){
                 for(int i=0;i<height;i++){
                     delete []map[i];

@@ -10,5 +10,6 @@ int main(){
     system.CalculateStep(system.getir(), system.getjr(), 0);
     system.getinfo();
     system.showmap();
+    system.MopFloor();
     return 0;
 }
