@@ -41,7 +41,7 @@ void System::readmap(){
 void System::showmap(){
     for(int i=0;i<height;i++){
         for(int j=0;j<width;j++)
-            printf("%d ", done[i][j]);
+            printf("%d ", map[i][j]);
         printf("\n");
     }
     printf("recharge position:%d %d\n", ir, jr);
@@ -124,6 +124,7 @@ void System::MopFloor(){
                 //System::showmap();
                 System::findway(steppostion[maxstep].pos_i[i], steppostion[maxstep].pos_j[i], maxstep, que);
                 //std::cin >> k;
+                que.pop();
                 while(!que.empty()){
                     printf("(%d,%d)\n", que.front().first, que.front().second);
                     que.pop();
@@ -133,6 +134,7 @@ void System::MopFloor(){
         }
         maxstep--;
     }
+    printf("(%d,%d)\n", ir, jr);
 }
 void System::findway(int i, int j , int distance, std::stack<std::pair<int, int>>& sta){
     sta.push({i, j});
@@ -202,7 +204,7 @@ void System::findway(int i, int j , int distance, std::queue<std::pair<int, int>
                     else if(done[i+1][j]>0 && map[i+1][j]<map[i][j]) findway(i+1, j, distance, que);
                     else if(done[i][j-1]>0 && map[i][j-1]<map[i][j]) findway(i, j-1, distance, que);
                     else if(done[i][j+1]>0 && map[i][j+1]<map[i][j]) findway(i, j+1, distance, que);
-                    else que.push({ir, jr});
+                    //else que.push({ir, jr});
                 }
             }
         }
@@ -218,7 +220,7 @@ void System::findway(int i, int j , int distance, std::queue<std::pair<int, int>
             else if(done[i+1][j]>0 && map[i+1][j]<map[i][j])findway(i+1, j, distance, que);
             else if(done[i][j-1]>0 && map[i][j-1]<map[i][j])findway(i, j-1, distance, que);
             else if(done[i][j+1]>0 && map[i][j+1]<map[i][j])findway(i, j+1, distance, que);
-            else que.push({ir, jr});
+            //else que.push({ir, jr});
         }
     }
 }
