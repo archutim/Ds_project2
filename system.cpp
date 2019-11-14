@@ -18,9 +18,10 @@ void System::readmap(){
     for(int i=0;i<height;i++)
         done[i] = new int[width];
     //set map and done
-    for(int i=0;i<height;i++)
+    for(int i=0;i<height;i++){
+        fscanf(fp, "%c", &garb);
         for(int j=0;j<width;j++){
-            fscanf(fp, "%c%c", &garb, &ch);
+            fscanf(fp, "%c", &ch);
             if(ch=='1'){
                 map[i][j]=-1;
                 done[i][j]=-1;
@@ -34,8 +35,9 @@ void System::readmap(){
                 done[i][j]=-2;   
                 ir=i;
                 jr=j;
-            }
+            }            
         }
+    }
     fclose(fp);
 }
 void System::showmap(){
