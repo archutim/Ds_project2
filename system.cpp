@@ -104,8 +104,8 @@ void System::getinfo(){
             }
         }
     }
-    for(int i=0;i<=maxstep;i++)
-        printf("%d step: %d\n", i, stepinfo[i]);
+    /*for(int i=0;i<=maxstep;i++)
+        printf("%d step: %d\n", i, stepinfo[i]);*/
     delete []stepinfo;
 }
 void System::MopFloor(){
@@ -139,11 +139,6 @@ void System::MopFloor(){
             }
             temp=temp->next;
         }
-    }
-    printf("%d\n", totalpath);
-    while(path!=nullptr){
-        printf("(%d,%d)\n", path->x, path->y);
-        path=path->next;
     }
 }
 void System::findgoway(int i, int j , int distance){
@@ -237,4 +232,16 @@ void System::findbackway(int i, int j , int distance){
             //else que.push({ir, jr});
         }
     }
+}
+void System::outputfile(){
+    FILE* fp;
+    if((fp = fopen("output.data", "w")) == nullptr){
+        puts("File could not be opened");
+    }      
+    fprintf(fp, "%d\n", totalpath);
+    while(path!=nullptr){
+        fprintf(fp, "(%d,%d)\n", path->x, path->y);
+        path=path->next;
+    }
+    fclose(fp);
 }

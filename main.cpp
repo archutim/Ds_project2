@@ -10,7 +10,7 @@ int main(){
     system.readmap();
     system.CalculateStep(system.getir(), system.getjr(), 0);
     system.getinfo();
-    system.showmap();
     system.MopFloor();
+    system.outputfile();
     return 0;
 }

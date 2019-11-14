@@ -14,6 +14,6 @@
             void MopFloor();
             void findgoway(int, int, int);
             void findbackway(int, int, int);
-            //void outputfile(void);
+            void outputfile(void);
     };
 #endif
