@@ -3,9 +3,9 @@
 void System::readmap(){
     FILE* fp;
     char garb, ch;
-    if((fp = fopen("input.data", "r")) == nullptr){
+    if((fp = fopen("floor.data", "r")) == nullptr){
         puts("File could not be opened");
-    }    
+    }
     fscanf(fp, "%d%d%d", &height, &width, &power);
     //dynamic two dimensional array
     map = new int*[height];
@@ -113,15 +113,17 @@ void System::MopFloor(){
     path = new Path(ir, jr);
     Path* temp = path;
     Path* temp1;
-    while(maxstep){
-        for(int i=steppostion[maxstep].number;i>=0;i--){
-            if(done[steppostion[maxstep].pos_i[i]][steppostion[maxstep].pos_j[i]]==0){
-                System::findgoway(steppostion[maxstep].pos_i[i], steppostion[maxstep].pos_j[i], maxstep);
-                totalpath--;
-                System::findbackway(steppostion[maxstep].pos_i[i], steppostion[maxstep].pos_j[i], maxstep);
+    if(maxstep<=power/2){
+        while(maxstep){
+            for(int i=steppostion[maxstep].number;i>=0;i--){
+                if(done[steppostion[maxstep].pos_i[i]][steppostion[maxstep].pos_j[i]]==0){
+                    System::findgoway(steppostion[maxstep].pos_i[i], steppostion[maxstep].pos_j[i], maxstep);
+                    totalpath--;
+                    System::findbackway(steppostion[maxstep].pos_i[i], steppostion[maxstep].pos_j[i], maxstep);
+                }
             }
+            maxstep--;
         }
-        maxstep--;
     }
     if(totalpath>0){
         path->next = new Path(ir, jr);
@@ -235,13 +237,31 @@ void System::findbackway(int i, int j , int distance){
 }
 void System::outputfile(){
     FILE* fp;
-    if((fp = fopen("output.data", "w")) == nullptr){
+    if((fp = fopen("final.path", "w")) == nullptr){
         puts("File could not be opened");
     }      
     fprintf(fp, "%d\n", totalpath);
+    int lastx = ir, lasty = jr-1, nowx, nowy;
+    for(int i=0;i<height;i++){
+        for(int j=0;j<width;j++){
+            if(done[i][j]==0)
+                printf("error_1\n");
+        }
+    }
     while(path!=nullptr){
+        if((abs(lastx-path->x)+abs(lasty-path->y))!=1){
+            printf("error_2\n");
+            printf("last:(%d,%d)\n", lastx, lasty);
+            printf("new:(%d,%d)\n", path->x, path->y);
+        }
+        lastx = path->x;
+        lasty = path->y;        
+        if(map[path->x][path->y]==-1){
+            printf("error_3\n");
+            printf("(%d,%d)", path->x, path->y);
+        }
         fprintf(fp, "(%d,%d)\n", path->x, path->y);
         path=path->next;
-    }
+    } 
     fclose(fp);
 }
