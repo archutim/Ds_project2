@@ -6,7 +6,7 @@
             int number;
             int* pos_i, *pos_j;
         public:
-            Steppostion():number(-1){}
+            Steppostion():number(0){}
             ~Steppostion(){
                 delete []pos_i;
                 delete []pos_j;

@@ -7,10 +7,8 @@
         public:
             void readmap();
             void showmap();
-            void CalculateStep(int, int, int);
-            void getinfo();
-            int getir() {   return ir;  }
-            int getjr() {   return jr;  }
+            void CalculateStep();
+            void Visitneighbor(int, int, int);
             void MopFloor();
             void findgoway(int, int, int);
             void findbackway(int, int, int);

@@ -7,9 +7,8 @@
 using namespace std;
 int main(){
     System system;
-    system.readmap();
-    system.CalculateStep(system.getir(), system.getjr(), 0);
-    system.getinfo();
+    system.readmap(); 
+    system.CalculateStep();
     system.MopFloor();
     system.outputfile();
     return 0;

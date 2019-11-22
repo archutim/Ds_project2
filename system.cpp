@@ -46,67 +46,54 @@ void System::showmap(){
     }
     printf("recharge position:%d %d\n", ir, jr);
 }
-void System::CalculateStep(int i, int j, int _step){
+void System::CalculateStep(){
+    if(power > 10000)
+        steppostion = new Steppostion[10001];
+    else
+        steppostion = new Steppostion[power/2+2];
+    steppostion[0].number=1;    steppostion[0].pos_i = new int(ir);    steppostion[0].pos_j = new int(jr);
+    int i;
+    for(i=0;steppostion[i].number!=0;i++){
+        steppostion[i+1].pos_i = new int[steppostion[i].number*4];
+        steppostion[i+1].pos_j = new int[steppostion[i].number*4];
+        for(int j=0;j<steppostion[i].number;j++)
+            Visitneighbor(steppostion[i].pos_i[j], steppostion[i].pos_j[j], i);
+    }
+    maxstep = i-1;
+}
+void System::Visitneighbor(int i, int j, int _step){
     if(i>0){
         if(map[i-1][j]==0 || map[i-1][j]>_step+1){
             map[i-1][j]=_step+1;
-            System::CalculateStep(i-1, j, _step+1);
+            steppostion[_step+1].pos_i[steppostion[_step+1].number] = i-1;
+            steppostion[_step+1].pos_j[steppostion[_step+1].number] = j;
+            steppostion[_step+1].number++;
         }
     }
     if(i+1<height){
         if(map[i+1][j]==0 || map[i+1][j]>_step+1){
             map[i+1][j]=_step+1;
-            System::CalculateStep(i+1, j, _step+1);
+            steppostion[_step+1].pos_i[steppostion[_step+1].number] = i+1;
+            steppostion[_step+1].pos_j[steppostion[_step+1].number] = j;
+            steppostion[_step+1].number++;
         }
     }
     if(j>0){
         if(map[i][j-1]==0 || map[i][j-1]>_step+1){
             map[i][j-1]=_step+1;
-            System::CalculateStep(i, j-1, _step+1);
+            steppostion[_step+1].pos_i[steppostion[_step+1].number] = i;
+            steppostion[_step+1].pos_j[steppostion[_step+1].number] = j-1;
+            steppostion[_step+1].number++;
         }
     }
     if(j+1<width){
         if(map[i][j+1]==0 || map[i][j+1]>_step+1){
             map[i][j+1]=_step+1;
-            System::CalculateStep(i, j+1, _step+1);
+            steppostion[_step+1].pos_i[steppostion[_step+1].number] = i;
+            steppostion[_step+1].pos_j[steppostion[_step+1].number] = j+1;
+            steppostion[_step+1].number++;
         }
     }
-}
-void System::getinfo(){
-    int* stepinfo;
-    for(int i=0;i<height;i++)
-        for(int j=0;j<width;j++){
-            if(map[i][j]==-1)   map[i][j]=0;
-            if(map[i][j]>maxstep) maxstep=map[i][j];
-        }
-    //dynamic one dimensional array
-    stepinfo = new int[maxstep+1];
-    for(int i=0;i<=maxstep;i++)
-        stepinfo[i]=0;
-    for(int i=0;i<height;i++){
-        for(int j=0;j<width;j++){
-            if(map[i][j]!=-2)
-                stepinfo[map[i][j]]++;
-        }
-    }
-    //dynamic one dimensional Steppostion array
-    steppostion = new Steppostion[maxstep+1];
-    for(int i=0;i<=maxstep;i++){
-        steppostion[i].pos_i = new int[stepinfo[i]];
-        steppostion[i].pos_j = new int[stepinfo[i]];
-    }
-    for(int i=0;i<height;i++){
-        for(int j=0;j<width;j++){
-            if(map[i][j]!=-2){
-                steppostion[map[i][j]].number++;
-                steppostion[map[i][j]].pos_i[steppostion[map[i][j]].number] = i;
-                steppostion[map[i][j]].pos_j[steppostion[map[i][j]].number] = j;
-            }
-        }
-    }
-    /*for(int i=0;i<=maxstep;i++)
-        printf("%d step: %d\n", i, stepinfo[i]);*/
-    delete []stepinfo;
 }
 void System::MopFloor(){
     int k;
@@ -115,7 +102,7 @@ void System::MopFloor(){
     Path* temp1;
     if(maxstep<=power/2){
         while(maxstep){
-            for(int i=steppostion[maxstep].number;i>=0;i--){
+            for(int i=steppostion[maxstep].number-1;i>=0;i--){
                 if(done[steppostion[maxstep].pos_i[i]][steppostion[maxstep].pos_j[i]]==0){
                     System::findgoway(steppostion[maxstep].pos_i[i], steppostion[maxstep].pos_j[i], maxstep);
                     totalpath--;
@@ -251,16 +238,16 @@ void System::outputfile(){
     while(path!=nullptr){
         if((abs(lastx-path->x)+abs(lasty-path->y))!=1){
             printf("error_2\n");
-            printf("last:(%d,%d)\n", lastx, lasty);
-            printf("new:(%d,%d)\n", path->x, path->y);
+            printf("last:%d %d\n", lastx, lasty);
+            printf("new:%d %d\n", path->x, path->y);
         }
         lastx = path->x;
         lasty = path->y;        
         if(map[path->x][path->y]==-1){
             printf("error_3\n");
-            printf("(%d,%d)", path->x, path->y);
+            printf("%d %d\n", path->x, path->y);
         }
-        fprintf(fp, "(%d,%d)\n", path->x, path->y);
+        fprintf(fp, "%d %d\n", path->x, path->y);
         path=path->next;
     } 
     fclose(fp);
