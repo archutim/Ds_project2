@@ -6,7 +6,6 @@
 #include "path.h"
 using namespace std;
 int main(){
-    printf("Hello World!\n");
     System system;
     system.readmap(); 
     system.CalculateStep();
